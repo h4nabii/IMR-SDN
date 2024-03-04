@@ -1,51 +1,67 @@
-
 # Design and Application of Intelligent Multipath Routing based on SDN <!-- omit in toc -->
 
 > 基于SDN网络的智能多路路由的设计与应用
 
-![floodlight](https://shields.io/badge/floodlight-master-red)
+![floodlight](https://shields.io/badge/Floodlight-master-red)
+![ubuntu](https://shields.io/badge/Ubuntu-22.04-blue)
 
-- [下载 JavaSE 8 和 ant](#下载-javase-8-和-ant)
-- [Install JavaSE 7](#install-javase-7)
-- [克隆 floodlight 代码仓库](#克隆-floodlight-代码仓库)
-- [选择版本（此项目使用 master 版本）](#选择版本此项目使用-master-版本)
-  - [使用 master 版本](#使用-master-版本)
-  - [选择 v1.2 版本](#选择-v12-版本)
+- [运行 Floodlight](#运行-floodlight)
+  - [安装 Java（二选一）](#安装-java二选一)
+    - [安装 JavaSE 8（首选）](#安装-javase-8首选)
+    - [安装 JavaSE 7（只能使用 v1.2 及以下版本）](#安装-javase-7只能使用-v12-及以下版本)
+  - [安装 Ant](#安装-ant)
+  - [克隆 Floodlight 代码仓库](#克隆-floodlight-代码仓库)
+  - [选择版本（此项目使用 master 版本）](#选择版本此项目使用-master-版本)
+    - [使用 master 版本](#使用-master-版本)
+    - [选择 v1.2 版本](#选择-v12-版本)
+- [使用 Mininet 创建虚拟拓扑网络](#使用-mininet-创建虚拟拓扑网络)
 
-## 下载 JavaSE 8 和 ant
+## 运行 Floodlight
+
+### 安装 Java（二选一）
+
+#### 安装 JavaSE 8（首选）
 
 ```sh
-sudo apt install openjdk-8-jdk ant
+sudo apt install openjdk-8-jdk
 ```
 
-## Install JavaSE 7
+#### 安装 JavaSE 7（只能使用 v1.2 及以下版本）
 
-1. Download archive `jdk-7u80-linux-x64.tar.gz`  
-from: <https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html>
+1. 从 [Oracle 官网](https://www.oracle.com/java/technologies/javase/javase7-archive-downloads.html) 下载压缩包 `jdk-7u80-linux-x64.tar.gz`
 
-2. Decompress the archive and move it to `/usr/lib/jvm`
-```bash
-tar -zxvf jdk-7u80-linux-x64.tar.gz
-```  
+2. 解压压缩包并移动到 `/usr/lib/jvm` 文件夹
+   
+   ```bash
+   tar -zxvf jdk-7u80-linux-x64.tar.gz
+   ```
 
-3. Edit `.bashrc`, append environment variables to file
-```bash
-vim .bashrc
+3. 编辑 `.bashrc`，把以下变量写入文件中
+   
+   ```bash
+   vim .bashrc
+   ```
+   
+   ```bash
+   export JAVA_HOME="/usr/lib/jvm"
+   export JRE_HOME="$JAVA_HOME/jre"
+   export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib
+   export PATH=$PATH:$JAVA_HOME/bin
+   ```
+
+4. 重新加载配置并检查 JavaSE 版本
+   ```bash
+   source .bashrc
+   java -version
+   ```
+
+### 安装 Ant
+
 ```
-```bash
-export JAVA_HOME="/usr/lib/jvm"
-export JRE_HOME="$JAVA_HOME/jre"
-export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib
-export PATH=$PATH:$JAVA_HOME/bin
+sudo apt install ant
 ```
 
-4. Refresh configure and check JavaSE version
-```bash
-source .bashrc
-java -version
-```
-
-## 克隆 floodlight 代码仓库
+### 克隆 Floodlight 代码仓库
 
 使用 `git clone` 命令从 GitHub 克隆代码仓库（二选一）
 
@@ -61,9 +77,9 @@ java -version
    git clone git@github.com:floodlight/floodlight.git
    ```
 
-## 选择版本（此项目使用 master 版本）
+### 选择版本（此项目使用 master 版本）
 
-### 使用 master 版本
+#### 使用 master 版本
 
 从 GitHub 仓库直接克隆的代码仓库无法通过 `ant` 命令直接编译  
 
@@ -76,15 +92,19 @@ java -version
 2. 将 `libthrift-0.14.1.jar` 放入 `/lib` 文件夹（可以删除老版本的 `libthrift-0.9.0.jar`）
 
 3. 修改 [build.xml](./floodlight//build.xml) 文件，将第 76 行
-    ```xml
-    <include name="libthrift-0.9.0.jar"/>
-    ```
-    修改为
-    ```xml
-    <include name="libthrift-0.14.1.jar"/>
-    ```
+   
+   ```xml
+   <include name="libthrift-0.9.0.jar"/>
+   ```
+   
+   修改为
+   
+   ```xml
+   <include name="libthrift-0.14.1.jar"/>
+   ```
 
 4. 删除 [TestEventLoop.java](./floodlight/src/test/java/net/floodlightcontroller/core/test/TestEventLoop.java) 文件第 105 行的 `@Override`
+   
    ```java
     // @Override
     public ChannelFuture register(ChannelPromise promise) {
@@ -93,16 +113,18 @@ java -version
    ```
 
 5. 编译源文件
+   
    ```sh
    ant
    ```
 
 6. 运行 floodlight
+   
    ```sh
    java -jar ./target/floodlight.jar
    ```
 
-### 选择 v1.2 版本
+#### 选择 v1.2 版本
 
 `v1.2` 版本使用 JavaSE 7 编写，但是 JavaSE 8 也可运行，高版本 ant 也可以编译
 
@@ -113,11 +135,16 @@ java -version
    ```
 
 2. 编译源文件
+   
    ```sh
    ant
    ```
 
 3. 运行 floodlight
+   
    ```sh
    java -jar ./target/floodlight.jar
    ```
+
+
+## 使用 Mininet 创建虚拟拓扑网络
