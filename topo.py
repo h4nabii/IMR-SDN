@@ -14,6 +14,7 @@ class SingleSwitchTopo(Topo):
     def build(self, n=2):
         switch1 = self.addSwitch('s1')
         switch2 = self.addSwitch('s2')
+        switch3 = self.addSwitch('s3')
         self.addLink(switch1, switch2, delay="20ms")
         new_host = self.addHost('h%s' % (n + 1))
         self.addLink(switch2, new_host, delay="10ms")
